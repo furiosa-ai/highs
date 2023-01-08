@@ -86,13 +86,13 @@
 //! // All the constraints are at their maximum
 //! assert_eq!(solution.rows(), vec![6., 7.]);
 //! ```
-//! 
+//!
 //! ### Integer variables
-//! 
+//!
 //! HiGHS supports mixed integer-linear programming.
 //! You can use `add_integer_column` to add an integer variable to the problem,
 //! and the solution is then guaranteed to contain a whole number as a value for this variable.
-//! 
+//!
 //! ```
 //! use highs::{Sense, Model, HighsModelStatus, ColProblem};
 //! // maximize: x + 2y under constraints x + y <= 3.5 and x - y >= 1
@@ -151,8 +151,8 @@ pub struct Problem<MATRIX = ColMatrix> {
 }
 
 impl<MATRIX: Default> Problem<MATRIX>
-    where
-        Problem<ColMatrix>: From<Problem<MATRIX>>,
+where
+    Problem<ColMatrix>: From<Problem<MATRIX>>,
 {
     /// Number of variables in the problem
     pub fn num_cols(&self) -> usize {
@@ -324,7 +324,8 @@ impl Model {
                     problem.matrix.aindex.as_ptr(),
                     problem.matrix.avalue.as_ptr()
                 ))
-            }.map(|_| Self { highs })
+            }
+            .map(|_| Self { highs })
         }
     }
 
@@ -447,7 +448,10 @@ impl SolvedModel {
             );
         }
 
+        let objective = unsafe { Highs_getObjectiveValue(self.highs.unsafe_mut_ptr()) };
+
         Solution {
+            objective,
             colvalue,
             coldual,
             rowvalue,
@@ -471,6 +475,7 @@ impl SolvedModel {
 /// Concrete values of the solution
 #[derive(Clone, Debug)]
 pub struct Solution {
+    objective: f64,
     colvalue: Vec<f64>,
     coldual: Vec<f64>,
     rowvalue: Vec<f64>,
@@ -493,6 +498,10 @@ impl Solution {
     /// The value of the constraint functions in the dual problem
     pub fn dual_rows(&self) -> &[f64] {
         &self.rowdual
+    }
+    /// The objective value
+    pub fn objective(&self) -> f64 {
+        self.objective
     }
 }
 
@@ -548,4 +557,3 @@ mod test {
         let _ = problem.optimise(Sense::Minimise).try_solve();
     }
 }
-

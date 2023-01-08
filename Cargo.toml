@@ -1,6 +1,6 @@
 [package]
 name = "highs"
-version = "1.2.2"
+version = "1.4.1"
 authors = ["Ophir LOJKINE", "rust-or"]
 edition = "2021"
 description = "Safe rust bindings for the HiGHS linear programming solver. See http://highs.dev."
@@ -9,5 +9,5 @@ repository = "https://github.com/rust-or/highs"
 keywords = ["linear-programming", "optimization", "math", "solver"]
 
 [dependencies]
-highs-sys = "1.2.2"
+highs-sys = { git = "https://github.com/furiosa-ai/highs-sys.git", tag = "v1.4.1" }
 log = "0.4"
